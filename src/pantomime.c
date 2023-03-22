@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-
 #include <mpd/client.h>
 #include <stdio.h>
 
@@ -33,7 +32,7 @@ int main()
         printf("Failed to connect to MPD\n");
         return 1;
     }
-    
+
     /* Print a list of all songs in the queue. */
     struct mpd_song *song;
     mpd_send_list_queue_meta(conn);
