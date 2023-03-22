@@ -1,5 +1,5 @@
 /*******************************************************************************
- * pantomime.c
+ * mpdwrapper.h
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -17,17 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include <stdio.h>
+/**
+ * @file mpdwrapper.h
+ */
 
-#include "mpdwrapper.h"
+#ifndef MPDWRAPPER_H
+#define MPDWRAPPER_H
 
-int main()
-{
-    struct mpdwrapper *mpd = mpdwrapper_new("127.0.0.1", 6600, 0);
-    if (!mpd) {
-        fprintf(stderr, "Error connecting to MPD.\n");
-    }
+#include <mpd/client.h>
 
-    mpdwrapper_print_queue(mpd);
-    mpdwrapper_free(mpd);
-}
+/**
+ * @brief Holds information about the current MPD server connection.
+ *
+ * This struct contains information about the current MPD server connection.
+ * With this struct, we are able to keep track of the connection state
+ * without having to make continual (often unnecessary) server requests.
+ */
+struct mpdwrapper {
+    struct mpd_connection *connection;
+    enum mpd_error last_error;
+};
+
+struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned int timeout);
+void mpdwrapper_free(struct mpdwrapper *mpdwrapper);
+
+const char *mpdwrapper_get_last_error_message(struct mpdwrapper *mpd);
+
+void mpdwrapper_print_queue(struct mpdwrapper *mpd);
+
+#endif /* MPDWRAPPER_H */
