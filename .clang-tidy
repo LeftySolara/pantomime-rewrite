@@ -1,0 +1,16 @@
+---
+Checks: "clang-diagnostic-*,clang-analyzer-*,readability-identifier-naming,readability-else-after-return,readability-simplify-boolean-expr,misc-redundant-expression"
+WarningsAsErrors: true
+HeaderFilterRegex: ".*"
+AnalyzeTemporaryDtors: false
+FormatStyle: google
+CheckOptions:
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: UPPER_CASE
+---
