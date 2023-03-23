@@ -46,7 +46,10 @@ struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned 
 
     /* Unable to connect to MPD */
     if (mpd_connection_get_error(mpd->connection) != MPD_ERROR_SUCCESS) {
-        fprintf(stderr, "MPD error: %s\n", mpd_connection_get_error_message(mpd->connection));
+        const char *error_message = mpd_connection_get_error_message(mpd->connection);
+        fprintf(stderr, "MPD error: %s\n", error_message);
+
+        mpdwrapper_free(mpd);
         return NULL;
     }
 
