@@ -17,12 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+#include <locale.h>
+#include <ncurses.h>
 #include <stdio.h>
 
 #include "mpdwrapper.h"
 
 int main()
 {
+    setlocale(LC_ALL, "");
+    initscr();
+
+    cbreak();
+    noecho();
+    curs_set(0);
+    // nodelay(stdscr, TRUE);
+    keypad(stdscr, TRUE);
+
+    printw("Hello World!");
+    refresh();
+
+    getch();
+    endwin();
+
     struct mpdwrapper *mpd = mpdwrapper_new("127.0.0.1", 6600, 0);
     if (!mpd) {
         fprintf(stderr, "Error connecting to MPD.\n");
@@ -30,4 +47,6 @@ int main()
 
     mpdwrapper_print_queue(mpd);
     mpdwrapper_free(mpd);
+
+    return 0;
 }

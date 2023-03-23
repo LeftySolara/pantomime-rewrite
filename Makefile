@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Werror -g -O0
-LDFLAGS = -lmpdclient
+LDFLAGS = -lmpdclient -lncurses
 
 TARGET_EXEC := pantomime
 
