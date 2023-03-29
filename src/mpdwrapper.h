@@ -43,6 +43,4 @@ void mpdwrapper_free(struct mpdwrapper *mpdwrapper);
 
 const char *mpdwrapper_get_last_error_message(struct mpdwrapper *mpd);
 
-void mpdwrapper_print_queue(struct mpdwrapper *mpd);
-
 #endif /* MPDWRAPPER_H */

@@ -28,22 +28,6 @@
 int main(int argc, char *argv[])
 {
     struct arguments arguments = parse_arguments(argc, argv);
-    /*
-      setlocale(LC_ALL, "");
-      initscr();
-
-      cbreak();
-      noecho();
-      curs_set(0);
-      // nodelay(stdscr, TRUE);
-      keypad(stdscr, TRUE);
-
-      printw("Hello World!");
-      refresh();
-
-      getch();
-      endwin();
-    */
 
     struct mpdwrapper *mpd = mpdwrapper_new(arguments.host, arguments.port, 0);
     if (!mpd) {
@@ -51,7 +35,29 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    mpdwrapper_print_queue(mpd);
+    setlocale(LC_ALL, "");
+    initscr();
+
+    cbreak();
+    noecho();
+    curs_set(0);
+    // nodelay(stdscr, TRUE);
+    keypad(stdscr, TRUE);
+
+    struct mpd_song *song;
+    mpd_send_list_queue_meta(mpd->connection);
+    while ((song = mpd_recv_song(mpd->connection)) != NULL) {
+        const char *song_title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
+        printw("%s\n", song_title);
+        mpd_song_free(song);
+    }
+    mpd_response_finish(mpd->connection);
+
+    refresh();
+
+    getch();
+    endwin();
+
     mpdwrapper_free(mpd);
 
     return 0;
