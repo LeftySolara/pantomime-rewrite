@@ -1,5 +1,5 @@
 /*******************************************************************************
- * pantomime.c
+ * ui.c - General user interface functions
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -7,50 +7,60 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "ui.h"
 
-#include "arguments.h"
-#include "mpdwrapper.h"
-#include "ui/ui.h"
+#include <curses.h>
+#include <locale.h>
 
-int main(int argc, char *argv[])
+/**
+ * Start ncurses.
+ */
+void start_curses()
 {
-    struct arguments arguments = parse_arguments(argc, argv);
+    setlocale(LC_ALL, "");
+    initscr();
 
-    struct mpdwrapper *mpd = mpdwrapper_new(arguments.host, arguments.port, 0);
-    if (!mpd) {
-        fprintf(stderr, "Error connecting to MPD.\n");
-        exit(EXIT_FAILURE);
-    }
+    cbreak();
+    noecho();
+    curs_set(0);
+    // nodelay(stdscr, TRUE);
+    keypad(stdscr, TRUE);
+}
 
-    start_curses();
+/**
+ * Stop ncurses.
+ */
+void stop_curses()
+{
+    endwin();
+}
 
-    struct mpd_song *song;
-    mpd_send_list_queue_meta(mpd->connection);
-    while ((song = mpd_recv_song(mpd->connection)) != NULL) {
-        const char *song_title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
-        write_text(song_title);
-        mpd_song_free(song);
-    }
-    mpd_response_finish(mpd->connection);
+/**
+ * Refresh the currently visible window.
+ */
+void refresh_window()
+{
+    refresh();
+}
 
-    refresh_window();
-    wait_for_input();
+/* Temporary fuction. Delete later. */
+void write_text(const char *text)
+{
+    printw("%s\n", text);
+}
 
-    stop_curses();
-
-    mpdwrapper_free(mpd);
-
-    return 0;
+/* Temporary fuction. Delete later. */
+void wait_for_input()
+{
+    getch();
 }
