@@ -26,7 +26,7 @@
 #include "mpdwrapper.h"
 
 struct arguments {
-    char *args[1];
+    char *args[0];
     char *host;
     int port;
 };
@@ -61,11 +61,10 @@ int main(int argc, char *argv[])
     static char doc[] = "An MPD client built on NCURSES.";
     static char args_doc[] = "";
     static struct argp_option options[] = {
-        {"host", 'h', "HOST", OPTION_ARG_OPTIONAL,
-         "The IP address or UNIX socket path of the MPD host."},
-        {"port", 'p', "PORT", OPTION_ARG_OPTIONAL,
+        {"host", 'h', "HOST", 0, "The IP address or UNIX socket path of the MPD host."},
+        {"port", 'p', "PORT", 0,
          "The port of the MPD host. Only used when connecting via IP address."},
-    };
+        {0}};
     static struct argp argp = {options, parse_opt, args_doc, doc};
 
     struct arguments arguments;
