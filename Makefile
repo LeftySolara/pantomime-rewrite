@@ -7,6 +7,10 @@ TARGET_EXEC := pantomime
 BUILD_DIR := ./build
 SRC_DIR := ./src
 
+DOC_CONFIG := Doxyfile.in
+DOC_DIR :=./doc
+DOC_BUILD_DIR := $(BUILD_DIR)/$(DOC_DIR)
+
 # Find all C files we want to compile.
 SRCS := $(shell find $(SRC_DIR) -name '*.c')
 
@@ -54,6 +58,11 @@ check-style:
 		fi ; \
 	done
 	@echo "Style check passed."
+
+.PHONY: doc
+doc: $(DOC_DIR)/$(DOC_CONFIG)
+	mkdir -p $(DOC_BUILD_DIR)
+	doxygen $(DOC_DIR)/$(DOC_CONFIG)
 
 .PHONY: clean
 clean:

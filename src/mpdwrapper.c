@@ -30,7 +30,8 @@
  * @brief Creates a new connection to an MPD server.
  *
  * @param host The server's hostname, IP address, or Unix socket path.
- * @param port The TCP port to connect to (0 for default). If "host" is a Unix socket path, this parameter is ignored.
+ * @param port The TCP port to connect to (0 for default). If "host" is a Unix socket path, this
+ * parameter is ignored.
  *
  * @return An @ref mpdwrapper object (which may have failed to connect), or NULL on out-of-memory.
  */
