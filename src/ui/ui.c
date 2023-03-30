@@ -17,13 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+/**
+ * @file ui.h
+ *
+ * @brief Functions for manipulating the overall UI comonent of the program.
+ */
+
 #include "ui.h"
 
 #include <curses.h>
 #include <locale.h>
 
 /**
- * Start ncurses.
+ * @brief Starts ncurses.
  */
 void start_curses()
 {
@@ -38,7 +44,7 @@ void start_curses()
 }
 
 /**
- * Stop ncurses.
+ * @brief Stops ncurses.
  */
 void stop_curses()
 {
@@ -46,7 +52,7 @@ void stop_curses()
 }
 
 /**
- * Refresh the currently visible window.
+ * @brief Refreshes the currently visible window.
  */
 void refresh_window()
 {
