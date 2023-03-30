@@ -1,5 +1,5 @@
 /*******************************************************************************
- * mpdwrapper.h
+ * mpdclient.h
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -18,11 +18,11 @@
  ******************************************************************************/
 
 /**
- * @file mpdwrapper.h
+ * @file mpdclient.h
  */
 
-#ifndef MPDWRAPPER_H
-#define MPDWRAPPER_H
+#ifndef MPDCLIENT_H 
+#define MPDCLIENT_H
 
 #include <mpd/client.h>
 
@@ -33,14 +33,14 @@
  * With this struct, we are able to keep track of the connection state
  * without having to make continual (often unnecessary) server requests.
  */
-struct mpdwrapper {
+struct mpdclient {
     struct mpd_connection *connection;
     enum mpd_error last_error;
 };
 
-struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned int timeout);
-void mpdwrapper_free(struct mpdwrapper *mpdwrapper);
+struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned int timeout);
+void mpdclient_free(struct mpdclient *mpdclient);
 
-const char *mpdwrapper_get_last_error_message(struct mpdwrapper *mpd);
+const char *mpdclient_get_last_error_message(struct mpdclient *mpd);
 
-#endif /* MPDWRAPPER_H */
+#endif /* MPDCLIENT_H */

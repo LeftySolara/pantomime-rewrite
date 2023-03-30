@@ -21,14 +21,14 @@
 #include <stdlib.h>
 
 #include "arguments.h"
-#include "mpdwrapper.h"
+#include "mpdclient.h"
 #include "ui/ui.h"
 
 int main(int argc, char *argv[])
 {
     struct arguments arguments = parse_arguments(argc, argv);
 
-    struct mpdwrapper *mpd = mpdwrapper_new(arguments.host, arguments.port, 0);
+    struct mpdclient *mpd = mpdclient_new(arguments.host, arguments.port, 0);
     if (!mpd) {
         fprintf(stderr, "Error connecting to MPD.\n");
         exit(EXIT_FAILURE);
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
     stop_curses();
 
-    mpdwrapper_free(mpd);
+    mpdclient_free(mpd);
 
     return 0;
 }

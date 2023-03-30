@@ -1,5 +1,5 @@
 /*******************************************************************************
- * mpdwrapper.c
+ * mpdclient.c
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -18,10 +18,10 @@
  ******************************************************************************/
 
 /**
- * @file mpdwrapper.h
+ * @file mpdclient.h
  */
 
-#include "mpdwrapper.h"
+#include "mpdclient.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,11 +33,11 @@
  * @param port The TCP port to connect to (0 for default). If "host" is a Unix socket path, this
  * parameter is ignored.
  *
- * @return An @ref mpdwrapper object (which may have failed to connect), or NULL on out-of-memory.
+ * @return An @ref mpdclient object (which may have failed to connect), or NULL on out-of-memory.
  */
-struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned int timeout)
+struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned int timeout)
 {
-    struct mpdwrapper *mpd = malloc(sizeof(*mpd));
+    struct mpdclient *mpd = malloc(sizeof(*mpd));
     if (!mpd) {
         return NULL;
     }
@@ -49,7 +49,7 @@ struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned 
         const char *error_message = mpd_connection_get_error_message(mpd->connection);
         fprintf(stderr, "MPD error: %s\n", error_message);
 
-        mpdwrapper_free(mpd);
+        mpdclient_free(mpd);
         return NULL;
     }
 
@@ -59,11 +59,11 @@ struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned 
 }
 
 /**
- * @brief Closes the connection and frees all memory used by an @ref mpdwrapper object.
+ * @brief Closes the connection and frees all memory used by an @ref mpdclient object.
  *
  * @param mpd The connection to MPD.
  */
-void mpdwrapper_free(struct mpdwrapper *mpd)
+void mpdclient_free(struct mpdclient *mpd)
 {
     if (!mpd) {
         return;
@@ -81,7 +81,7 @@ void mpdwrapper_free(struct mpdwrapper *mpd)
  *
  * @return A human-readable string, or NULL if no error has occurred.
  */
-const char *mpdwrapper_get_last_error_message(struct mpdwrapper *mpd)
+const char *mpdclient_get_last_error_message(struct mpdclient *mpd)
 {
     if (mpd->last_error == MPD_ERROR_SUCCESS) {
         return NULL;
