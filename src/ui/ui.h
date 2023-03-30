@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+/**
+ * @file ui.h
+ */
+
 #ifndef UI_H
 #define UI_H
 

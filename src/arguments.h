@@ -17,11 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+/**
+ * @file arguments.h
+ */
+
 #ifndef ARGUMENTS_H
 #define ARGUMENTS_H
 
 #include <argp.h>
 
+/**
+ * @brief Holds command-line arguments passed to the program.
+ */
 struct arguments {
     char *args[0];
     char *host;

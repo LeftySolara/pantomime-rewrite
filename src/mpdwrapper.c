@@ -29,11 +29,11 @@
 /**
  * @brief Creates a new connection to an MPD server.
  *
- * @param host The MPD server host to connect to.
- * @param port The port MPD is running on.
- * @param timeout The MPD timeout.
+ * @param host The server's hostname, IP address, or Unix socket path.
+ * @param port The TCP port to connect to (0 for default). If "host" is a Unix socket path, this
+ * parameter is ignored.
  *
- * @return Pointer to an mpdwrapper struct.
+ * @return An @ref mpdwrapper object (which may have failed to connect), or NULL on out-of-memory.
  */
 struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned int timeout)
 {
@@ -59,7 +59,9 @@ struct mpdwrapper *mpdwrapper_new(const char *host, unsigned int port, unsigned 
 }
 
 /**
- * @brief Frees memory used by an mpdwrapper struct.
+ * @brief Closes the connection and frees all memory used by an @ref mpdwrapper object.
+ *
+ * @param mpd The connection to MPD.
  */
 void mpdwrapper_free(struct mpdwrapper *mpd)
 {
@@ -74,7 +76,11 @@ void mpdwrapper_free(struct mpdwrapper *mpd)
     free(mpd);
 }
 
-/* @brief Get the last error message encountered by MPD. */
+/**
+ * @brief Returns a human-readable string describing the most recent MPD error.
+ *
+ * @return A human-readable string, or NULL if no error has occurred.
+ */
 const char *mpdwrapper_get_last_error_message(struct mpdwrapper *mpd)
 {
     if (mpd->last_error == MPD_ERROR_SUCCESS) {
