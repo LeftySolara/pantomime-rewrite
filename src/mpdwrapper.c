@@ -83,17 +83,3 @@ const char *mpdwrapper_get_last_error_message(struct mpdwrapper *mpd)
 
     return mpd_connection_get_error_message(mpd->connection);
 }
-
-void mpdwrapper_print_queue(struct mpdwrapper *mpd)
-{
-    struct mpd_song *song;
-
-    mpd_send_list_queue_meta(mpd->connection);
-    while ((song = mpd_recv_song(mpd->connection)) != NULL) {
-        const char *song_title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
-        printf("%s\n", song_title);
-        mpd_song_free(song);
-    }
-
-    mpd_response_finish(mpd->connection);
-}
