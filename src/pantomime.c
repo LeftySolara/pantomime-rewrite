@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "arguments.h"
+#include "command/command.h"
 #include "mpdclient.h"
 #include "ui/screens/queue_screen.h"
 #include "ui/ui.h"
@@ -53,7 +54,14 @@ int main(int argc, char *argv[])
     mpd_response_finish(mpd->connection);
 
     refresh_window();
-    wait_for_input();
+
+    int ch;
+    enum command_type cmd_type = CMD_NULL;
+
+    while (cmd_type != CMD_QUIT) {
+        ch = getch();
+        cmd_type = find_key_command(ch);
+    }
 
     stop_curses();
 

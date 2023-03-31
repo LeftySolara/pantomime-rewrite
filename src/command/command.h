@@ -1,5 +1,5 @@
 /*******************************************************************************
- * ui.c - General user interface functions
+ * command.h - Structs and functions for handling user input commands.
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -18,43 +18,30 @@
  ******************************************************************************/
 
 /**
- * @file ui.h
- *
- * @brief Functions for manipulating the overall UI comonent of the program.
+ * @file command.h
  */
 
-#include "ui.h"
+#ifndef COMMAND_H
+#define COMMAND_H
 
-#include <curses.h>
-#include <locale.h>
+#define MAX_KEYS 3 /* Maximum number of keys a command can be mapped to. */
 
-/**
- * @brief Starts ncurses.
- */
-void start_curses()
-{
-    setlocale(LC_ALL, "");
-    initscr();
+enum command_type {
+    CMD_NULL,
+    CMD_QUIT,
+    NUM_CMDS
+};
 
-    cbreak();
-    noecho();
-    curs_set(0);
-    // nodelay(stdscr, TRUE);
-    keypad(stdscr, TRUE);
-}
+struct command {
+    enum command_type cmd_type; /** The type of command to execute. */
+    int keys[MAX_KEYS];         /** The keys bound to the command. */
+    char *name;                 /** The name of the command. */
+    char *description;          /** Brief description of what the command does. */
+};
 
-/**
- * @brief Stops ncurses.
- */
-void stop_curses()
-{
-    endwin();
-}
+enum command_type find_key_command(int key);
+void get_command_keys(enum command_type cmd_type, char *buffer);
+char *get_command_desc(enum command_type cmd_type);
+void key_to_str(int key, char *buffer);
 
-/**
- * @brief Refreshes the currently visible window.
- */
-void refresh_window()
-{
-    wrefresh(stdscr);
-}
+#endif /* COMMAND_H */
