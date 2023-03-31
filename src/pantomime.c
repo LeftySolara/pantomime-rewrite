@@ -22,6 +22,7 @@
 
 #include "arguments.h"
 #include "mpdclient.h"
+#include "ui/screens/queue_screen.h"
 #include "ui/ui.h"
 
 int main(int argc, char *argv[])
@@ -40,7 +41,13 @@ int main(int argc, char *argv[])
     mpd_send_list_queue_meta(mpd->connection);
     while ((song = mpd_recv_song(mpd->connection)) != NULL) {
         const char *song_title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
-        write_text(song_title);
+        const char *song_artist = mpd_song_get_tag(song, MPD_TAG_ARTIST, 0);
+        const char *song_album = mpd_song_get_tag(song, MPD_TAG_ALBUM, 0);
+        unsigned song_length = mpd_song_get_duration(song);
+
+        queue_screen_write_song_info(stdscr, song_title, song_artist, song_album, song_length);
+        wprintw(stdscr, "\n");
+
         mpd_song_free(song);
     }
     mpd_response_finish(mpd->connection);

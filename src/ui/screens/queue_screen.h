@@ -1,5 +1,5 @@
 /*******************************************************************************
- * ui.c - General user interface functions
+ * queue_screen.h - Functions for displaying the MPD queue
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -18,49 +18,11 @@
  ******************************************************************************/
 
 /**
- * @file ui.h
- *
- * @brief Functions for manipulating the overall UI comonent of the program.
+ * @file queue_screen.h
  */
-
-#include "ui.h"
 
 #include <curses.h>
-#include <locale.h>
 
-/**
- * @brief Starts ncurses.
- */
-void start_curses()
-{
-    setlocale(LC_ALL, "");
-    initscr();
+void queue_screen_create_label_time(char *buffer, unsigned int length);
 
-    cbreak();
-    noecho();
-    curs_set(0);
-    // nodelay(stdscr, TRUE);
-    keypad(stdscr, TRUE);
-}
-
-/**
- * @brief Stops ncurses.
- */
-void stop_curses()
-{
-    endwin();
-}
-
-/**
- * @brief Refreshes the currently visible window.
- */
-void refresh_window()
-{
-    wrefresh(stdscr);
-}
-
-/* Temporary fuction. Delete later. */
-void wait_for_input()
-{
-    getch();
-}
+void queue_screen_write_song_info(WINDOW *win, const char *title, const char *artist, const char *album, unsigned length);
