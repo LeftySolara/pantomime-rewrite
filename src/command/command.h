@@ -1,5 +1,5 @@
 /*******************************************************************************
- * mpdclient.h
+ * command.h - Structs and functions for handling user input commands.
  *******************************************************************************
  * Copyright (C) 2019-2023 Julianne Adams
  *
@@ -7,40 +7,41 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 /**
- * @file mpdclient.h
+ * @file command.h
  */
 
-#ifndef MPDCLIENT_H 
-#define MPDCLIENT_H
+#ifndef COMMAND_H
+#define COMMAND_H
 
-#include <mpd/client.h>
+#define MAX_KEYS 3 /* Maximum number of keys a command can be mapped to. */
 
-/**
- * @brief Holds information about the current MPD server connection.
- *
- * This struct contains information about the current MPD server connection.
- * With this struct, we are able to keep track of the connection state
- * without having to make continual (often unnecessary) server requests.
- */
-struct mpdclient {
-    struct mpd_connection *connection;
-    enum mpd_error last_error;
+enum command_type {
+    CMD_NULL,
+    CMD_QUIT,
+    NUM_CMDS
 };
 
-struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned int timeout);
-void mpdclient_free(struct mpdclient *mpdclient);
+struct command {
+    enum command_type cmd_type; /** The type of command to execute. */
+    int keys[MAX_KEYS];         /** The keys bound to the command. */
+    char *name;                 /** The name of the command. */
+    char *description;          /** Brief description of what the command does. */
+};
 
-const char *mpdclient_get_last_error_message(struct mpdclient *mpd);
+enum command_type find_key_command(int key);
+void get_command_keys(enum command_type cmd_type, char *buffer);
+char *get_command_desc(enum command_type cmd_type);
+void key_to_str(int key, char *buffer);
 
-#endif /* MPDCLIENT_H */
+#endif /* COMMAND_H */

@@ -21,7 +21,9 @@
 #include <stdlib.h>
 
 #include "arguments.h"
-#include "mpdclient.h"
+#include "command/command.h"
+#include "mpdclient/mpdclient.h"
+#include "ui/screens/queue_screen.h"
 #include "ui/ui.h"
 
 int main(int argc, char *argv[])
@@ -36,20 +38,24 @@ int main(int argc, char *argv[])
 
     start_curses();
 
-    struct mpd_song *song;
-    mpd_send_list_queue_meta(mpd->connection);
-    while ((song = mpd_recv_song(mpd->connection)) != NULL) {
-        const char *song_title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
-        write_text(song_title);
-        mpd_song_free(song);
-    }
-    mpd_response_finish(mpd->connection);
+    struct queue_screen *queue_screen = malloc(sizeof(*queue_screen));
+    queue_screen->win = stdscr;
+
+    queue_screen_draw_songlist(queue_screen, mpd->queue);
 
     refresh_window();
-    wait_for_input();
+
+    int ch;
+    enum command_type cmd_type = CMD_NULL;
+
+    while (cmd_type != CMD_QUIT) {
+        ch = getch();
+        cmd_type = find_key_command(ch);
+    }
 
     stop_curses();
 
+    free(queue_screen);
     mpdclient_free(mpd);
 
     return 0;

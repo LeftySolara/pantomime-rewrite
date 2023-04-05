@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * @brief Creates a new connection to an MPD server.
@@ -44,7 +45,6 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
 
     mpd->connection = mpd_connection_new(host, port, timeout);
 
-    /* Unable to connect to MPD */
     if (mpd_connection_get_error(mpd->connection) != MPD_ERROR_SUCCESS) {
         const char *error_message = mpd_connection_get_error_message(mpd->connection);
         fprintf(stderr, "MPD error: %s\n", error_message);
@@ -52,6 +52,15 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
         mpdclient_free(mpd);
         return NULL;
     }
+
+    mpd->queue = songlist_new();
+
+    /* Fetch the queue */
+    struct mpd_song *song;
+    while ((song = mpd_recv_song(mpd->connection)) != NULL) {
+        songlist_append(mpd->queue, song);
+    }
+    mpd_response_finish(mpd->connection);
 
     mpd->last_error = mpd_connection_get_error(mpd->connection);
 
@@ -72,6 +81,9 @@ void mpdclient_free(struct mpdclient *mpd)
     if (mpd->connection) {
         mpd_connection_free(mpd->connection);
     }
+    if (mpd->queue) {
+        songlist_free(mpd->queue);
+    }
 
     free(mpd);
 }
@@ -88,4 +100,79 @@ const char *mpdclient_get_last_error_message(struct mpdclient *mpd)
     }
 
     return mpd_connection_get_error_message(mpd->connection);
+}
+
+/**
+ * @brief Get a song's title.
+ *
+ * @param song The song to query.
+ *
+ * @return A dynamically-allocated string containing the song's title.
+ *
+ * This function returns a string that is dynamically-allocated, as if
+ * malloc() were called. The caller is responsible for freeing the memory
+ * used by this string.
+ */
+char *mpdclient_get_song_title(struct mpd_song *song)
+{
+    const char *title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
+
+    char *return_value = malloc(sizeof(char) * strlen(title));
+    strcpy(return_value, title);
+
+    return return_value;
+}
+
+/**
+ * @brief Get the name of a song's artist.
+ *
+ * @param song The song to query.
+ *
+ * @return A dynamically-allocated string containing the name of the song's artist.
+ *
+ * This function returns a string that is dynamically-allocated, as if
+ * malloc() were called. The caller is responsible for freeing the memory
+ * used by this string.
+ */
+char *mpdclient_get_song_artist(struct mpd_song *song)
+{
+    const char *artist = mpd_song_get_tag(song, MPD_TAG_ARTIST, 0);
+
+    char *return_value = malloc(sizeof(char) * strlen(artist));
+    strcpy(return_value, artist);
+
+    return return_value;
+}
+
+/**
+ * @brief Get the name of the album a song belongs to.
+ *
+ * @param song The song to query.
+ *
+ * @return A dynamically-allocated string containing the name of the song's album name.
+ *
+ * This function returns a string that is dynamically-allocated, as if
+ * malloc() were called. The caller is responsible for freeing the memory
+ * used by this string.
+ */
+char *mpdclient_get_song_album(struct mpd_song *song)
+{
+    const char *album = mpd_song_get_tag(song, MPD_TAG_ALBUM, 0);
+
+    char *return_value = malloc(sizeof(char) * strlen(album));
+    strcpy(return_value, album);
+
+    return return_value;
+}
+
+/**
+ * @brief Get the length of a song.
+ *
+ * @param song The song to query.
+ *
+ * @return An unsigned integer representing the song's length in seconds.
+ */
+unsigned mpdclient_get_song_length(struct mpd_song *song)
+{
+    return mpd_song_get_duration(song);
 }
