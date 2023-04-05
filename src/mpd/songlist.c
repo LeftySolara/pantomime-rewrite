@@ -21,7 +21,7 @@
  * @file songlist.h
  */
 
-#include "songlist.h"
+#include "pantomime/mpd/songlist.h"
 
 #include <stdlib.h>
 

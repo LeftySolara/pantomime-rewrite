@@ -21,7 +21,7 @@
  * @file mpdclient.h
  */
 
-#include "mpdclient.h"
+#include "pantomime/mpd/client.h"
 
 #include <stdio.h>
 #include <stdlib.h>
