@@ -23,7 +23,7 @@
 
 #include <curses.h>
 
-#include "../../mpdclient/mpdclient.h" // TODO: Create include directory
+#include "pantomime/mpd/client.h"
 
 struct queue_screen_row {
     

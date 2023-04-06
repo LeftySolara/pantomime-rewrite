@@ -6,6 +6,7 @@ TARGET_EXEC := pantomime
 
 BUILD_DIR := ./build
 SRC_DIR := ./src
+INC_DIR := ./include
 
 DOC_CONFIG := Doxyfile.in
 DOC_DIR :=./doc
@@ -21,7 +22,7 @@ OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
 # Every folder in SRC_DIR will need to be passed to gcc so it can find header files.
-INC_DIRS := $(shell find $(SRC_DIR) -type d)
+INC_DIRS := $(shell find $(SRC_DIR) -type d) $(INC_DIR)
 # Add a prefix to INC_DIRS. So moduleA becomes -ImoduleA.
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
@@ -43,7 +44,7 @@ style:
 		echo "Formatting $$src..." ; \
 		clang-format -i -style=file "$$src" ; \
 		echo "Running tidy on $$src..." ; \
-		clang-tidy --config-file="./.clang-tidy" "$$src" -- ; \
+		clang-tidy --config-file="./.clang-tidy" "$$src" -- -Iinclude/ ; \
 	done
 	@echo "Done."
 

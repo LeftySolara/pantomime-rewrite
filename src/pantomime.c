@@ -22,7 +22,7 @@
 
 #include "arguments.h"
 #include "command/command.h"
-#include "mpdclient/mpdclient.h"
+#include "pantomime/mpd/client.h"
 #include "ui/screens/queue_screen.h"
 #include "ui/ui.h"
 
