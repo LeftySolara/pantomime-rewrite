@@ -23,7 +23,7 @@
  * @brief Functions for manipulating the overall UI comonent of the program.
  */
 
-#include "ui.h"
+#include "pantomime/ui/ui.h"
 
 #include <curses.h>
 #include <locale.h>
