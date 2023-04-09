@@ -55,14 +55,14 @@ int main(int argc, char *argv[])
         ch = getch();
         cmd_type = find_key_command(ch);
 
-        switch (ch) {
-            case '1':
+        switch (cmd_type) {
+            case CMD_HELP:
                 ui_set_visible_panel(ui, HELP);
                 break;
-            case '2':
+            case CMD_QUEUE:
                 ui_set_visible_panel(ui, QUEUE);
                 break;
-            case '3':
+            case CMD_LIBRARY:
                 ui_set_visible_panel(ui, LIBRARY);
                 break;
             default:

@@ -34,7 +34,13 @@
 static struct command commands[] = {
     {CMD_NULL, {0, 0, 0}, "Null", "Null command. Does nothing."},
 
-    {CMD_QUIT, {'q', 'Q', KEY_CTRL('c')}, "Quit", "Quit Pantomime."}};
+    {CMD_QUIT, {'q', 'Q', KEY_CTRL('c')}, "Quit", "Quit Pantomime."},
+
+    {CMD_HELP, {'1', 0, 0}, "Help", "Display the help screen."},
+
+    {CMD_QUEUE, {'2', 0, 0}, "Queue", "Display the queue screen."},
+
+    {CMD_LIBRARY, {'3', 0, 0}, "Library", "Display the library screen."}};
 
 /**
  * @brief Finds the command mapped to a given key.

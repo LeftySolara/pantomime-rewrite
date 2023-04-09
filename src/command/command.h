@@ -29,6 +29,9 @@
 enum command_type {
     CMD_NULL,
     CMD_QUIT,
+    CMD_HELP,
+    CMD_QUEUE,
+    CMD_LIBRARY,
     NUM_CMDS
 };
 
