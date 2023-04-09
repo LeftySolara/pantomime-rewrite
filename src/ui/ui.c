@@ -123,6 +123,18 @@ void destroy_panels(PANEL **panels, int num_panels)
 }
 
 /**
+ * @brief Sets the given panel as visible.
+ *
+ * @param ui A pointer to the UI struct.
+ * @param panel The panel to make visible.
+ */
+void ui_set_visible_panel(struct ui *ui, enum ui_panel panel)
+{
+    ui->visible_panel = panel;
+    top_panel(ui->panels[panel]);
+}
+
+/**
  * @brief Draws the UI on the screen.
  *
  * @param ui A pointer to a struct containing UI information.
@@ -130,6 +142,7 @@ void destroy_panels(PANEL **panels, int num_panels)
 void ui_draw(struct ui *ui)
 {
     WINDOW *win = panel_window(ui->panels[ui->visible_panel]);
+    wclear(win);
 
     switch (ui->visible_panel) {
         case HELP:

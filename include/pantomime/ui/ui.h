@@ -47,6 +47,8 @@ void stop_curses();
 PANEL **create_panels(int num_panels, int width, int height);
 void destroy_panels(PANEL **panels, int num_panels);
 
+void ui_set_visible_panel(struct ui *ui, enum ui_panel panel);
+
 void ui_draw(struct ui *ui);
 
 #endif /* UI_H */

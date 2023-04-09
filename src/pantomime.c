@@ -38,10 +38,15 @@ int main(int argc, char *argv[])
 
     start_curses();
 
+    /*
     struct queue_screen *queue_screen = malloc(sizeof(*queue_screen));
     queue_screen->win = stdscr;
 
     queue_screen_draw_songlist(queue_screen, mpd->queue);
+    */
+
+    struct ui *ui = ui_new();
+    ui_draw(ui);
 
     int ch;
     enum command_type cmd_type = CMD_NULL;
@@ -49,11 +54,40 @@ int main(int argc, char *argv[])
     while (cmd_type != CMD_QUIT) {
         ch = getch();
         cmd_type = find_key_command(ch);
+
+        switch (ch) {
+            case '1':
+                ui_set_visible_panel(ui, HELP);
+                break;
+            case '2':
+                ui_set_visible_panel(ui, QUEUE);
+                break;
+            case '3':
+                ui_set_visible_panel(ui, LIBRARY);
+                break;
+            default:
+                break;
+        }
+
+        switch (ui->visible_panel) {
+            case HELP:
+                break;
+            case QUEUE:
+                break;
+            case LIBRARY:
+                break;
+            default:
+                break;
+        }
+
+        ui_draw(ui);
     }
 
     stop_curses();
 
-    free(queue_screen);
+    ui_free(ui);
+
+    /* free(queue_screen); */
     mpdclient_free(mpd);
 
     return 0;
