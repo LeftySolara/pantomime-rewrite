@@ -27,6 +27,40 @@
 
 #include <curses.h>
 #include <locale.h>
+#include <panel.h>
+#include <stdlib.h>
+
+enum ui_panel default_panel = QUEUE;
+
+/**
+ * @brief Creates and initializes the UI.
+ */
+struct ui *ui_new()
+{
+    struct ui *ui = malloc(sizeof(*ui));
+    if (!ui) {
+        return NULL;
+    }
+
+    getmaxyx(stdscr, ui->maxy, ui->maxx);
+
+    ui->panels = create_panels(NUM_PANELS, ui->maxy - STATUSBAR_HEIGHT, ui->maxx);
+    ui->visible_panel = default_panel;
+    top_panel(ui->panels[ui->visible_panel]);
+
+    return ui;
+}
+
+/**
+ * @brief Tears down and frees memory used by the UI.
+ *
+ * @param ui A pointer to the UI to tear down.
+ */
+void ui_free(struct ui *ui)
+{
+    destroy_panels(ui->panels, NUM_PANELS);
+    free(ui);
+}
 
 /**
  * @brief Starts ncurses.
@@ -52,9 +86,65 @@ void stop_curses()
 }
 
 /**
- * @brief Refreshes the currently visible window.
+ * @brief Creates an array of panels to display in the UI.
+ *
+ * @param num_panels The number of panels to create.
+ * @param width The width of the panels.
+ * @param height The height of the panels.
+ *
+ * @return An array of PANEL pointers.
  */
-void refresh_window()
+PANEL **create_panels(int num_panels, int width, int height)
 {
-    wrefresh(stdscr);
+    PANEL **panels = malloc(sizeof(PANEL *) * num_panels);
+    WINDOW *win;
+
+    for (int i = 0; i < num_panels; ++i) {
+        win = newwin(height, width, 0, 0);
+        panels[i] = new_panel(win);
+    }
+
+    return panels;
+}
+
+/**
+ * @brief Frees memory used by UI panels.
+ *
+ * @param panels The panels to destroy.
+ * @param num_panels The number of panels to destroy.
+ */
+void destroy_panels(PANEL **panels, int num_panels)
+{
+    for (int i = 0; i < num_panels; ++i) {
+        delwin(panel_window(panels[i]));
+        del_panel(panels[i]);
+    }
+    free(panels);
+}
+
+/**
+ * @brief Draws the UI on the screen.
+ *
+ * @param ui A pointer to a struct containing UI information.
+ */
+void ui_draw(struct ui *ui)
+{
+    WINDOW *win = panel_window(ui->panels[ui->visible_panel]);
+
+    switch (ui->visible_panel) {
+        case HELP:
+            wprintw(win, "HELP Screen");
+            break;
+        case QUEUE:
+            wprintw(win, "QUEUE Screen");
+            break;
+        case LIBRARY:
+            wprintw(win, "LIBRARY Screen");
+            break;
+        default:
+            break;
+    }
+
+    update_panels();
+    doupdate();
 }

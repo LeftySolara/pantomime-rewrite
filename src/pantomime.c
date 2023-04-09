@@ -43,8 +43,6 @@ int main(int argc, char *argv[])
 
     queue_screen_draw_songlist(queue_screen, mpd->queue);
 
-    refresh_window();
-
     int ch;
     enum command_type cmd_type = CMD_NULL;
 
