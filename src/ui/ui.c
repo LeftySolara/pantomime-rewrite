@@ -115,9 +115,12 @@ PANEL **create_panels(int num_panels, int width, int height)
  */
 void destroy_panels(PANEL **panels, int num_panels)
 {
+    WINDOW *win;
+
     for (int i = 0; i < num_panels; ++i) {
-        delwin(panel_window(panels[i]));
+        win = panel_window(panels[i]);
         del_panel(panels[i]);
+        delwin(win);
     }
     free(panels);
 }
