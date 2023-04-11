@@ -24,13 +24,31 @@
 #ifndef UI_H
 #define UI_H
 
+#include <panel.h>
+
+#define STATUSBAR_HEIGHT 2
+
+enum ui_panel { HELP, QUEUE, LIBRARY, NUM_PANELS };
+
+struct ui {
+    PANEL **panels;
+    enum ui_panel visible_panel;
+
+    int maxx;
+    int maxy;
+};
+
+struct ui *ui_new();
+void ui_free(struct ui *ui);
+
 void start_curses();
 void stop_curses();
 
-void refresh_window();
+PANEL **create_panels(int num_panels, int width, int height);
+void destroy_panels(PANEL **panels, int num_panels);
 
-void write_text(const char *text);
+void ui_set_visible_panel(struct ui *ui, enum ui_panel panel);
 
-void wait_for_input();
+void ui_draw(struct ui *ui);
 
 #endif /* UI_H */
