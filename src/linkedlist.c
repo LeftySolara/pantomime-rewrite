@@ -184,6 +184,7 @@ enum ll_error linkedlist_push(struct linkedlist *list, void *data)
         node->prev = current;
         current->next = node;
         node->next = NULL;
+        list->tail = node;
     }
     ++list->length;
 
