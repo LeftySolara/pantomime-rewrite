@@ -45,6 +45,10 @@ void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *));
 
 unsigned linkedlist_get_length(struct linkedlist *list);
 
+void *linkedlist_at(struct linkedlist *list, unsigned index);
+
 enum ll_error linkedlist_push(struct linkedlist *list, void *data);
+
+enum ll_error linkedlist_clear(struct linkedlist *list, void (*free_fn)(void *));
 
 #endif /* LINKEDLIST_H */

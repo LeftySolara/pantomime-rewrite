@@ -127,17 +127,7 @@ void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *))
         return;
     }
 
-    struct node *current = list->head;
-    struct node *next;
-
-    while (current) {
-        next = current->next;
-        node_free(current, free_fn);
-        current = next;
-    }
-
-    list->head = NULL;
-    list->tail = NULL;
+    linkedlist_clear(list, free_fn);
     free(list);
 }
 
@@ -149,6 +139,27 @@ void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *))
 unsigned linkedlist_get_length(struct linkedlist *list)
 {
     return list->length;
+}
+
+/**
+ * @brief Gets the item at the specified index.
+ *
+ * @param list The list to fetch from.
+ * @param index The position in the list to fetch.
+ *
+ * @return The data at the given index, or NULL on error.
+ */
+void *linkedlist_at(struct linkedlist *list, unsigned index)
+{
+    if (index >= list->length) {
+        return NULL;
+    }
+
+    struct node *current = list->head;
+    for (int i = 0; i < index; ++i) {
+        current = current->next;
+    }
+    return current->data;
 }
 
 /**
@@ -187,6 +198,32 @@ enum ll_error linkedlist_push(struct linkedlist *list, void *data)
         list->tail = node;
     }
     ++list->length;
+
+    return LL_ERROR_SUCCESS;
+}
+
+/**
+ * Removes all items from a linked list.
+ *
+ * @param list The list to clear.
+ */
+enum ll_error linkedlist_clear(struct linkedlist *list, void (*free_fn)(void *))
+{
+    if (!list) {
+        return LL_ERROR_SUCCESS;
+    }
+
+    struct node *current = list->head;
+    struct node *next;
+
+    while (current) {
+        next = current->next;
+        node_free(current, free_fn);
+        current = next;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
 
     return LL_ERROR_SUCCESS;
 }
