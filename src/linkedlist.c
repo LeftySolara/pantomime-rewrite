@@ -203,6 +203,52 @@ enum ll_error linkedlist_push(struct linkedlist *list, void *data)
 }
 
 /**
+ * @brief Removes the item at the given position.
+ *
+ * @param list The list to remove from.
+ * @param index The position in the list to remove.
+ * @param free_fn The function to use to free the data.
+ */
+enum ll_error linkedlist_remove(struct linkedlist *list, unsigned index, void (*free_fn)(void *))
+{
+    if (!list || list->length == 0 || index >= list->length) {
+        return LL_ERROR_PARAM;
+    }
+
+    if (index == 0) {
+        if (!list->head->next) {
+            linkedlist_clear(list, free_fn);
+        }
+        else {
+            struct node *current = list->head;
+            struct node *new_head = list->head->next;
+
+            current->prev = NULL;
+            list->head = new_head;
+            node_free(current, free_fn);
+        }
+    }
+    else {
+        struct node *current = list->head;
+
+        for (int i = 0; i < index; ++i)
+            current = current->next;
+
+        if (current == list->tail)
+            list->tail = list->tail->prev;
+        if (current->prev)
+            current->prev->next = current->next;
+        if (current->next)
+            current->next->prev = current->prev;
+
+        node_free(current, free_fn);
+        list->length--;
+    }
+
+    return LL_ERROR_SUCCESS;
+}
+
+/**
  * Removes all items from a linked list.
  *
  * @param list The list to clear.
@@ -224,6 +270,7 @@ enum ll_error linkedlist_clear(struct linkedlist *list, void (*free_fn)(void *))
 
     list->head = NULL;
     list->tail = NULL;
+    list->length = 0;
 
     return LL_ERROR_SUCCESS;
 }
