@@ -142,6 +142,16 @@ void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *))
 }
 
 /**
+ * @brief Get the length of a linked list.
+ *
+ * @param list The list to query.
+ */
+unsigned linkedlist_get_length(struct linkedlist *list)
+{
+    return list->length;
+}
+
+/**
  * @brief Add an item to a linked list.
  *
  * @param list The list to push to.

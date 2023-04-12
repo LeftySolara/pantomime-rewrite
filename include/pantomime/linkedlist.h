@@ -43,6 +43,8 @@ void node_free(struct node *node, void (*free_fn)(void *));
 struct linkedlist *linkedlist_new(size_t data_size);
 void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *));
 
+unsigned linkedlist_get_length(struct linkedlist *list);
+
 enum ll_error linkedlist_push(struct linkedlist *list, void *data);
 
 #endif /* LINKEDLIST_H */
