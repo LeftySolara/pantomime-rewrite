@@ -23,6 +23,7 @@
 
 #include "pantomime/linkedlist.h"
 
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -138,4 +139,43 @@ void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *))
     list->head = NULL;
     list->tail = NULL;
     free(list);
+}
+
+/**
+ * @brief Add an item to a linked list.
+ *
+ * @param list The list to push to.
+ * @param data The data to add to the list.
+ */
+enum ll_error linkedlist_push(struct linkedlist *list, void *data)
+{
+    if (!list || !data) {
+        return LL_ERROR_PARAM;
+    }
+    if (list->length == UINT_MAX) {
+        return LL_ERROR_FULL;
+    }
+
+    struct node *node = node_new(data, list->data_size);
+    if (!node) {
+        return LL_ERROR_NO_MEMORY;
+    }
+
+    if (!list->head) {
+        list->head = node;
+        list->tail = node;
+    }
+    else {
+        struct node *current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+
+        node->prev = current;
+        current->next = node;
+        node->next = NULL;
+    }
+    ++list->length;
+
+    return LL_ERROR_SUCCESS;
 }

@@ -26,6 +26,14 @@
 
 #include <stddef.h>
 
+enum ll_error {
+    LL_ERROR_SUCCESS,  /** No error. */
+    LL_ERROR_PARAM,  /** Invalid parameter passed to list-handling function. */
+    LL_ERROR_FULL,  /** List is full. */
+    LL_ERROR_NO_MEMORY, /** No memory available to perform operation. */
+    LL_ERROR_UNKNOWN  /** Unknown error. */
+};
+
 struct node;
 struct linkedlist;
 
@@ -34,5 +42,7 @@ void node_free(struct node *node, void (*free_fn)(void *));
 
 struct linkedlist *linkedlist_new(size_t data_size);
 void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *));
+
+enum ll_error linkedlist_push(struct linkedlist *list, void *data);
 
 #endif /* LINKEDLIST_H */
