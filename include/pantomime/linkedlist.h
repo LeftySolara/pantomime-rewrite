@@ -24,8 +24,15 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-struct node;
+#include <stddef.h>
 
+struct node;
 struct linkedlist;
+
+struct node *node_new(void *data, size_t data_size);
+void node_free(struct node *node, void (*free_fn)(void *));
+
+struct linkedlist *linkedlist_new(size_t data_size);
+void linkedlist_free(struct linkedlist *list, void (*free_fn)(void *));
 
 #endif /* LINKEDLIST_H */
