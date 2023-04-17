@@ -43,6 +43,9 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
         return NULL;
     }
 
+    mpd->connection = NULL;
+    mpd->queue = NULL;
+
     mpd->connection = mpd_connection_new(host, port, timeout);
 
     if (mpd_connection_get_error(mpd->connection) != MPD_ERROR_SUCCESS) {
@@ -118,7 +121,7 @@ char *mpdclient_get_song_title(struct mpd_song *song)
     const char *title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
 
     char *return_value = malloc(sizeof(char) * strlen(title));
-    strcpy(return_value, title);
+    strcpy(return_value, title);  // NOLINT
 
     return return_value;
 }
@@ -139,7 +142,7 @@ char *mpdclient_get_song_artist(struct mpd_song *song)
     const char *artist = mpd_song_get_tag(song, MPD_TAG_ARTIST, 0);
 
     char *return_value = malloc(sizeof(char) * strlen(artist));
-    strcpy(return_value, artist);
+    strcpy(return_value, artist);  // NOLINT
 
     return return_value;
 }
@@ -160,7 +163,7 @@ char *mpdclient_get_song_album(struct mpd_song *song)
     const char *album = mpd_song_get_tag(song, MPD_TAG_ALBUM, 0);
 
     char *return_value = malloc(sizeof(char) * strlen(album));
-    strcpy(return_value, album);
+    strcpy(return_value, album);  // NOLINT
 
     return return_value;
 }
