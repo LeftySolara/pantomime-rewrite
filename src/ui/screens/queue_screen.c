@@ -74,22 +74,22 @@ void queue_screen_write_song_info(WINDOW *win, const char *title, const char *ar
     free(label_time);
 }
 
-void queue_screen_draw_songlist(struct queue_screen *screen, struct songlist *songs)
+void queue_screen_draw_songlist(struct queue_screen *screen, struct linkedlist *songs)
 {
-    struct songlist_node *current = songs->head;
+    int list_length = linkedlist_get_length(songs);
+    struct mpd_song *song;
 
-    while (current) {
-        char *title = mpdclient_get_song_title(current->song);
-        char *artist = mpdclient_get_song_artist(current->song);
-        char *album = mpdclient_get_song_album(current->song);
-        unsigned length = mpdclient_get_song_length(current->song);
+    for (int i = 0; i < list_length; ++i) {
+        song = linkedlist_at(songs, i);
+        char *title = mpdclient_get_song_title(song);
+        char *artist = mpdclient_get_song_artist(song);
+        char *album = mpdclient_get_song_album(song);
+        unsigned length = mpdclient_get_song_length(song);
 
         queue_screen_write_song_info(screen->win, title, artist, album, length);
 
         free(title);
         free(artist);
         free(album);
-
-        current = current->next;
     }
 }

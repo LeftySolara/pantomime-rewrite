@@ -23,6 +23,7 @@
 
 #include <curses.h>
 
+#include "pantomime/linkedlist.h"
 #include "pantomime/mpd/client.h"
 
 struct queue_screen_row {
@@ -42,4 +43,4 @@ void queue_screen_create_label_time(char *buffer, unsigned int length);
 
 void queue_screen_write_song_info(WINDOW *win, const char *title, const char *artist, const char *album, unsigned length);
 
-void queue_screen_draw_songlist(struct queue_screen *screen, struct songlist *songs);
+void queue_screen_draw_songlist(struct queue_screen *screen, struct linkedlist *songs);

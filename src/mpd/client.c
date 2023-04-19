@@ -56,12 +56,12 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
         return NULL;
     }
 
-    mpd->queue = songlist_new();
+    mpd->queue = linkedlist_new(sizeof(struct mpd_song *));
 
     /* Fetch the queue */
     struct mpd_song *song;
     while ((song = mpd_recv_song(mpd->connection)) != NULL) {
-        songlist_append(mpd->queue, song);
+        linkedlist_push(mpd->queue, song);
     }
     mpd_response_finish(mpd->connection);
 
@@ -85,10 +85,15 @@ void mpdclient_free(struct mpdclient *mpd)
         mpd_connection_free(mpd->connection);
     }
     if (mpd->queue) {
-        songlist_free(mpd->queue);
+        linkedlist_free(mpd->queue, mpdclient_song_free);
     }
 
     free(mpd);
+}
+
+void mpdclient_song_free(void *song)
+{
+    mpd_song_free(song);
 }
 
 /**
