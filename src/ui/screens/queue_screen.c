@@ -21,7 +21,7 @@
  * @file queue_screen.h
  */
 
-#include "queue_screen.h"
+#include "pantomime/ui/queue_screen.h"
 
 #include <stdio.h>
 #include <stdlib.h>
