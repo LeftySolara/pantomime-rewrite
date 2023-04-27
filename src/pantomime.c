@@ -23,7 +23,6 @@
 #include "arguments.h"
 #include "command/command.h"
 #include "pantomime/mpd/client.h"
-#include "pantomime/ui/queue_screen.h"
 #include "pantomime/ui/ui.h"
 
 int main(int argc, char *argv[])

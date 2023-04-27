@@ -24,6 +24,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "pantomime/ui/queue_screen.h"
+
 #include <panel.h>
 
 #define STATUSBAR_HEIGHT 2
@@ -33,6 +35,8 @@ enum ui_panel { HELP, QUEUE, LIBRARY, NUM_PANELS };
 struct ui {
     PANEL **panels;
     enum ui_panel visible_panel;
+
+    struct queue_screen *queue_screen;
 
     int maxx;
     int maxy;

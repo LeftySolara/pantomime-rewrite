@@ -39,8 +39,12 @@ struct queue_screen {
     WINDOW *win;
 };
 
+struct queue_screen *queue_screen_new(WINDOW *win);
+void queue_screen_free(struct queue_screen *screen);
+
 void queue_screen_create_label_time(char *buffer, unsigned int length);
 
 void queue_screen_write_song_info(WINDOW *win, const char *title, const char *artist, const char *album, unsigned length);
 
+void queue_screen_draw(struct queue_screen *screen);
 void queue_screen_draw_songlist(struct queue_screen *screen, struct linkedlist *songs);

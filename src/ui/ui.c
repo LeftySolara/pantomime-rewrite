@@ -45,6 +45,8 @@ struct ui *ui_new()
     getmaxyx(stdscr, ui->maxy, ui->maxx);
 
     ui->panels = create_panels(NUM_PANELS, ui->maxy - STATUSBAR_HEIGHT, ui->maxx);
+    ui->queue_screen = queue_screen_new(panel_window(ui->panels[QUEUE]));
+
     ui->visible_panel = default_panel;
     top_panel(ui->panels[ui->visible_panel]);
 
@@ -59,6 +61,7 @@ struct ui *ui_new()
 void ui_free(struct ui *ui)
 {
     destroy_panels(ui->panels, NUM_PANELS);
+    queue_screen_free(ui->queue_screen);
     free(ui);
 }
 
@@ -152,7 +155,7 @@ void ui_draw(struct ui *ui)
             wprintw(win, "HELP Screen");
             break;
         case QUEUE:
-            wprintw(win, "QUEUE Screen");
+            queue_screen_draw(ui->queue_screen);
             break;
         case LIBRARY:
             wprintw(win, "LIBRARY Screen");

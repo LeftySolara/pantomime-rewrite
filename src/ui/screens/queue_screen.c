@@ -23,6 +23,7 @@
 
 #include "pantomime/ui/queue_screen.h"
 
+#include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,6 +34,46 @@
  * plus a colon, two more digits, and a null terminator.
  */
 #define TIME_STRING_LENGTH 9
+
+/**
+ * @brief Creates a new queue screen instance.
+ *
+ * This function initializes a window meant to be used to display the MPD queue.
+ * If the "win" parameter is NULL, a new window is created from stdscr.
+ *
+ * @param win The NCURSES window to assign to the screen.
+ */
+struct queue_screen *queue_screen_new(WINDOW *win)
+{
+    struct queue_screen *screen = malloc(sizeof(*screen));
+    if (!screen) {
+        return NULL;
+    }
+
+    if (win) {
+        screen->win = win;
+    }
+    else {
+        screen->win = newwin(getmaxy(stdscr), getmaxx(stdscr), 0, 0);
+    }
+
+    return screen;
+}
+
+/**
+ * @brief Frees memory used by a queue screen.
+ *
+ * @param screen The queue screen to free.
+ */
+void queue_screen_free(struct queue_screen *screen)
+{
+    if (!screen) {
+        return;
+    }
+
+    delwin(screen->win);
+    free(screen);
+}
 
 /**
  * @brief Creates a string representation of a length of time.
@@ -72,6 +113,17 @@ void queue_screen_write_song_info(WINDOW *win, const char *title, const char *ar
     wprintw(win, "%s    %s    %s    %s", artist, title, album, label_time);
 
     free(label_time);
+}
+
+/**
+ * @brief Draws the contents of a queue screen to its window.
+ *
+ * @param screen The queue screen to draw.
+ */
+void queue_screen_draw(struct queue_screen *screen)
+{
+    wprintw(screen->win, "This is the queue screen.");
+    wnoutrefresh(screen->win);
 }
 
 void queue_screen_draw_songlist(struct queue_screen *screen, struct linkedlist *songs)
