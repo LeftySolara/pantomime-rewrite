@@ -53,6 +53,6 @@ void destroy_panels(PANEL **panels, int num_panels);
 
 void ui_set_visible_panel(struct ui *ui, enum ui_panel panel);
 
-void ui_draw(struct ui *ui);
+void ui_draw(struct ui *ui, struct mpdclient *mpd);
 
 #endif /* UI_H */

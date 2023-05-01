@@ -46,7 +46,10 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
 void mpdclient_free(struct mpdclient *mpdclient);
 void mpdclient_song_free(void *);
 
+int mpdclient_has_error(struct mpdclient *mpd);
 const char *mpdclient_get_last_error_message(struct mpdclient *mpd);
+
+void mpdclient_update_queue(struct mpdclient *mpd);
 
 char *mpdclient_get_song_title(struct mpd_song *song);
 char *mpdclient_get_song_artist(struct mpd_song *song);

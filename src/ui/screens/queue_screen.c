@@ -110,7 +110,7 @@ void queue_screen_write_song_info(WINDOW *win, const char *title, const char *ar
     queue_screen_create_label_time(label_time, length);
 
     /* TODO: Temorary formatting. Will create nicely-formatted rows later. */
-    wprintw(win, "%s    %s    %s    %s", artist, title, album, label_time);
+    wprintw(win, "%s    %s    %s    %s\n", artist, title, album, label_time);
 
     free(label_time);
 }
@@ -119,29 +119,22 @@ void queue_screen_write_song_info(WINDOW *win, const char *title, const char *ar
  * @brief Draws the contents of a queue screen to its window.
  *
  * @param screen The queue screen to draw.
+ * @param queue A link list containing the songs in the queue.
  */
-void queue_screen_draw(struct queue_screen *screen)
+void queue_screen_draw(struct queue_screen *screen, struct linkedlist *queue)
 {
-    wprintw(screen->win, "This is the queue screen.");
-    wnoutrefresh(screen->win);
-}
-
-void queue_screen_draw_songlist(struct queue_screen *screen, struct linkedlist *songs)
-{
-    int list_length = linkedlist_get_length(songs);
+    int list_length = linkedlist_get_length(queue);
     struct mpd_song *song;
 
     for (int i = 0; i < list_length; ++i) {
-        song = linkedlist_at(songs, i);
-        char *title = mpdclient_get_song_title(song);
-        char *artist = mpdclient_get_song_artist(song);
-        char *album = mpdclient_get_song_album(song);
+        song = linkedlist_at(queue, i);
+        const char *title = mpdclient_get_song_title(song);
+        const char *artist = mpdclient_get_song_artist(song);
+        const char *album = mpdclient_get_song_album(song);
         unsigned length = mpdclient_get_song_length(song);
 
         queue_screen_write_song_info(screen->win, title, artist, album, length);
-
-        free(title);
-        free(artist);
-        free(album);
     }
+
+    wnoutrefresh(screen->win);
 }

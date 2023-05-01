@@ -44,7 +44,7 @@ struct ui *ui_new()
 
     getmaxyx(stdscr, ui->maxy, ui->maxx);
 
-    ui->panels = create_panels(NUM_PANELS, ui->maxy - STATUSBAR_HEIGHT, ui->maxx);
+    ui->panels = create_panels(NUM_PANELS, ui->maxx, ui->maxy - STATUSBAR_HEIGHT);
     ui->queue_screen = queue_screen_new(panel_window(ui->panels[QUEUE]));
 
     ui->visible_panel = default_panel;
@@ -144,8 +144,9 @@ void ui_set_visible_panel(struct ui *ui, enum ui_panel panel)
  * @brief Draws the UI on the screen.
  *
  * @param ui A pointer to a struct containing UI information.
+ * @param mpd A connection to the MPD server.
  */
-void ui_draw(struct ui *ui)
+void ui_draw(struct ui *ui, struct mpdclient *mpd)
 {
     WINDOW *win = panel_window(ui->panels[ui->visible_panel]);
     wclear(win);
@@ -155,7 +156,7 @@ void ui_draw(struct ui *ui)
             wprintw(win, "HELP Screen");
             break;
         case QUEUE:
-            queue_screen_draw(ui->queue_screen);
+            queue_screen_draw(ui->queue_screen, mpd->queue);
             break;
         case LIBRARY:
             wprintw(win, "LIBRARY Screen");

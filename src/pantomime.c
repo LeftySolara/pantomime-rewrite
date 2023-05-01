@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     start_curses();
 
     struct ui *ui = ui_new();
-    ui_draw(ui);
+    ui_draw(ui, mpd);
 
     int ch;
     enum command_type cmd_type = CMD_NULL;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
                 break;
         }
 
-        ui_draw(ui);
+        ui_draw(ui, mpd);
     }
 
     stop_curses();
