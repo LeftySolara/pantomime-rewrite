@@ -24,7 +24,6 @@
 #include "command/command.h"
 #include "pantomime/mpd/client.h"
 #include "pantomime/ui/ui.h"
-#include "ui/screens/queue_screen.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,15 +37,8 @@ int main(int argc, char *argv[])
 
     start_curses();
 
-    /*
-    struct queue_screen *queue_screen = malloc(sizeof(*queue_screen));
-    queue_screen->win = stdscr;
-
-    queue_screen_draw_songlist(queue_screen, mpd->queue);
-    */
-
     struct ui *ui = ui_new();
-    ui_draw(ui);
+    ui_draw(ui, mpd);
 
     int ch;
     enum command_type cmd_type = CMD_NULL;
@@ -80,7 +72,7 @@ int main(int argc, char *argv[])
                 break;
         }
 
-        ui_draw(ui);
+        ui_draw(ui, mpd);
     }
 
     stop_curses();

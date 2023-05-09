@@ -26,7 +26,7 @@
 
 #include <mpd/client.h>
 
-#include "songlist.h"
+#include "pantomime/linkedlist.h"
 
 /**
  * @brief Holds information about the current MPD server connection.
@@ -37,15 +37,19 @@
  */
 struct mpdclient {
     struct mpd_connection *connection;
-    struct songlist *queue;
+    struct linkedlist *queue;
 
     enum mpd_error last_error;
 };
 
 struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned int timeout);
 void mpdclient_free(struct mpdclient *mpdclient);
+void mpdclient_song_free(void *);
 
+int mpdclient_has_error(struct mpdclient *mpd);
 const char *mpdclient_get_last_error_message(struct mpdclient *mpd);
+
+void mpdclient_update_queue(struct mpdclient *mpd);
 
 char *mpdclient_get_song_title(struct mpd_song *song);
 char *mpdclient_get_song_artist(struct mpd_song *song);

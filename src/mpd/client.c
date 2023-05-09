@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "pantomime/linkedlist.h"
+
 /**
  * @brief Creates a new connection to an MPD server.
  *
@@ -48,7 +50,7 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
 
     mpd->connection = mpd_connection_new(host, port, timeout);
 
-    if (mpd_connection_get_error(mpd->connection) != MPD_ERROR_SUCCESS) {
+    if (mpdclient_has_error(mpd)) {
         const char *error_message = mpd_connection_get_error_message(mpd->connection);
         fprintf(stderr, "MPD error: %s\n", error_message);
 
@@ -56,17 +58,17 @@ struct mpdclient *mpdclient_new(const char *host, unsigned int port, unsigned in
         return NULL;
     }
 
-    mpd->queue = songlist_new();
+    mpdclient_update_queue(mpd);
+    if (mpdclient_has_error(mpd)) {
+        // TODO: create function for printing MPD error messages
+        const char *error_message = mpd_connection_get_error_message(mpd->connection);
+        fprintf(stderr, "MPD error: %s\n", error_message);
 
-    /* Fetch the queue */
-    struct mpd_song *song;
-    while ((song = mpd_recv_song(mpd->connection)) != NULL) {
-        songlist_append(mpd->queue, song);
+        mpdclient_free(mpd);
+        return NULL;
     }
-    mpd_response_finish(mpd->connection);
 
     mpd->last_error = mpd_connection_get_error(mpd->connection);
-
     return mpd;
 }
 
@@ -85,10 +87,27 @@ void mpdclient_free(struct mpdclient *mpd)
         mpd_connection_free(mpd->connection);
     }
     if (mpd->queue) {
-        songlist_free(mpd->queue);
+        linkedlist_free(mpd->queue, mpdclient_song_free);
     }
 
     free(mpd);
+}
+
+void mpdclient_song_free(void *song)
+{
+    mpd_song_free(song);
+}
+
+/**
+ * @brief Checks whether the MPD client has encountered an error.
+ *
+ * @param mpd The MPD connection.
+ *
+ * @return 0 if there is no error, or 1 if an error was found.
+ */
+int mpdclient_has_error(struct mpdclient *mpd)
+{
+    return mpd_connection_get_error(mpd->connection) != MPD_ERROR_SUCCESS;
 }
 
 /**
@@ -105,6 +124,32 @@ const char *mpdclient_get_last_error_message(struct mpdclient *mpd)
     return mpd_connection_get_error_message(mpd->connection);
 }
 
+/*
+ * @brief Fetches the current MPD queue.
+ *
+ * @param mpd The connection to MPD.
+ */
+void mpdclient_update_queue(struct mpdclient *mpd)
+{
+    if (!mpd->connection) {
+        return;
+    }
+    if (!mpd->queue) {
+        mpd->queue = linkedlist_new(sizeof(struct mpd_song *) + 512);
+    }
+    linkedlist_clear(mpd->queue, mpdclient_song_free);
+
+    struct mpd_song *song;
+    mpd_send_list_queue_meta(mpd->connection);
+
+    while ((song = mpd_recv_song(mpd->connection))) {
+        linkedlist_push(mpd->queue, song);
+    }
+    mpd_response_finish(mpd->connection);
+
+    mpd->last_error = mpd_connection_get_error(mpd->connection);
+}
+
 /**
  * @brief Get a song's title.
  *
@@ -118,10 +163,15 @@ const char *mpdclient_get_last_error_message(struct mpdclient *mpd)
  */
 char *mpdclient_get_song_title(struct mpd_song *song)
 {
-    const char *title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
+    if (!song) {
+        return NULL;
+    }
 
-    char *return_value = malloc(sizeof(char) * strlen(title));
-    strcpy(return_value, title);  // NOLINT
+    const char *title = mpd_song_get_tag(song, MPD_TAG_TITLE, 0);
+    int len = strlen(title) + 1;
+
+    char *return_value = malloc(sizeof(char) * len);
+    strncpy(return_value, title, strlen(title) + 1);  // NOLINT
 
     return return_value;
 }

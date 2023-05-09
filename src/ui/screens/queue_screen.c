@@ -21,8 +21,9 @@
  * @file queue_screen.h
  */
 
-#include "queue_screen.h"
+#include "pantomime/ui/queue_screen.h"
 
+#include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,6 +34,46 @@
  * plus a colon, two more digits, and a null terminator.
  */
 #define TIME_STRING_LENGTH 9
+
+/**
+ * @brief Creates a new queue screen instance.
+ *
+ * This function initializes a window meant to be used to display the MPD queue.
+ * If the "win" parameter is NULL, a new window is created from stdscr.
+ *
+ * @param win The NCURSES window to assign to the screen.
+ */
+struct queue_screen *queue_screen_new(WINDOW *win)
+{
+    struct queue_screen *screen = malloc(sizeof(*screen));
+    if (!screen) {
+        return NULL;
+    }
+
+    if (win) {
+        screen->win = win;
+    }
+    else {
+        screen->win = newwin(getmaxy(stdscr), getmaxx(stdscr), 0, 0);
+    }
+
+    return screen;
+}
+
+/**
+ * @brief Frees memory used by a queue screen.
+ *
+ * @param screen The queue screen to free.
+ */
+void queue_screen_free(struct queue_screen *screen)
+{
+    if (!screen) {
+        return;
+    }
+
+    delwin(screen->win);
+    free(screen);
+}
 
 /**
  * @brief Creates a string representation of a length of time.
@@ -69,27 +110,31 @@ void queue_screen_write_song_info(WINDOW *win, const char *title, const char *ar
     queue_screen_create_label_time(label_time, length);
 
     /* TODO: Temorary formatting. Will create nicely-formatted rows later. */
-    wprintw(win, "%s    %s    %s    %s", artist, title, album, label_time);
+    wprintw(win, "%s    %s    %s    %s\n", artist, title, album, label_time);
 
     free(label_time);
 }
 
-void queue_screen_draw_songlist(struct queue_screen *screen, struct songlist *songs)
+/**
+ * @brief Draws the contents of a queue screen to its window.
+ *
+ * @param screen The queue screen to draw.
+ * @param queue A link list containing the songs in the queue.
+ */
+void queue_screen_draw(struct queue_screen *screen, struct linkedlist *queue)
 {
-    struct songlist_node *current = songs->head;
+    int list_length = linkedlist_get_length(queue);
+    struct mpd_song *song;
 
-    while (current) {
-        char *title = mpdclient_get_song_title(current->song);
-        char *artist = mpdclient_get_song_artist(current->song);
-        char *album = mpdclient_get_song_album(current->song);
-        unsigned length = mpdclient_get_song_length(current->song);
+    for (int i = 0; i < list_length; ++i) {
+        song = linkedlist_at(queue, i);
+        const char *title = mpdclient_get_song_title(song);
+        const char *artist = mpdclient_get_song_artist(song);
+        const char *album = mpdclient_get_song_album(song);
+        unsigned length = mpdclient_get_song_length(song);
 
         queue_screen_write_song_info(screen->win, title, artist, album, length);
-
-        free(title);
-        free(artist);
-        free(album);
-
-        current = current->next;
     }
+
+    wnoutrefresh(screen->win);
 }
